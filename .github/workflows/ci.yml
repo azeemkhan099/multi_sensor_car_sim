@@ -1,25 +1,36 @@
-name: CI
+name: ROS2 CI
 
+# Only run on push to main or when PRs are opened targeting main
 on:
   push:
+    branches:
+      - main
+    # Ignore changes in the workflow file itself to prevent loops
+    paths-ignore:
+      - .github/workflows/ci.yml
   pull_request:
+    branches:
+      - main
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Build Docker Image
-        run: docker build -t multisensor-car .
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
-      - name: Run ROS2 Node Inside Container
-        run: |
-          docker run --rm multisensor-car bash -c "
-            source /opt/ros/jazzy/setup.bash &&
-            source /ros2_ws/install/setup.bash &&
-            ros2 run multi_sensor_car_sim sensor_publisher
-          "
+    - name: Build Docker image
+      run: docker build -t multisensor-car .
+
+    - name: Run ROS2 node inside Docker
+      run: |
+        docker run --rm multisensor-car bash -c "\
+          source /opt/ros/jazzy/setup.bash && \
+          source /ros2_ws/install/setup.bash && \
+          ros2 run multi_sensor_car_sim sensor_publisher \
+        "
 
