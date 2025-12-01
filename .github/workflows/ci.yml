@@ -1,25 +1,23 @@
-name: ROS2 CI
+name: CI
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
-  build:
+  build_and_test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout repo
+      uses: actions/checkout@v3
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v3
+    - name: Build Docker image
+      run: docker build -t multisensor-car .
 
-      - name: Build Docker image
-        run: docker build -t multi_sensor_car_sim .
-
-      - name: Run ROS2 node inside Docker (test)
-        run: docker run --rm multi_sensor_car_sim:latest ros2 run multi_sensor_car_sim sensor_publisher
+    - name: Run node inside container
+      run: |
+        docker run --rm multisensor-car bash -c "\
+          source /opt/ros/humble/setup.bash && \
+          source /ros2_ws/install/setup.bash && \
+          ros2 run multisensor_car multi_sensor_node \
+        "
 
