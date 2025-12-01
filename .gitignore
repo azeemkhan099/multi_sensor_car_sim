@@ -1,0 +1,15 @@
+# ROS2 build folders
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
+
+# Python cache
+**/__pycache__/
+**/*.pyc
+
+# Docker
+*.log
+*.pyc
+
+# OS files
+.DS_Store
