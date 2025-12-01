@@ -1,3 +1,4 @@
+
 # Multi-Sensor Car Simulation (ROS2)
 
 A ROS2-based multi-sensor car simulation project demonstrating integration of multiple sensors, publishing real-time data, and modular node-based architecture.
@@ -60,42 +61,112 @@ multisensor_car_sim/
 
 ## Getting Started
 
-### Prerequisites
+### Requirements
 
-- Docker installed on your system.
-- ROS2 Jazzy environment (provided via Docker image).
+- Docker
+- ROS2 Jazzy base image
+- Python3
 
-### Running the Simulation
+---
 
-1. Build the Docker image:
+### Step 1: Clone the Repository
 
 ```bash
-docker build -t multi_sensor_car_sim .
+git clone <your-repo-url>
+cd multisensor_car_sim
 ````
 
-2. Run the container:
+---
+
+### Step 2: Build the Docker Image
 
 ```bash
-docker run -it --name multi_sensor_car_sim multi_sensor_car_sim:latest
+docker build -t multi_sensor_car_sim:latest .
 ```
 
-3. Inside the container, check the active ROS2 nodes:
+This will:
+
+* Use ROS2 Jazzy as the base image
+* Install Python pip and colcon
+* Copy your workspace into `/ros2_ws`
+* Install Python dependencies from `requirements.txt`
+* Build the ROS2 package
+
+---
+
+### Step 3: Run the Container
+
+```bash
+docker run -it --name multi_sensor_car_sim multi_sensor_car_sim:latest bash
+```
+
+Inside the container, source the ROS2 and workspace setups:
+
+```bash
+source /opt/ros/jazzy/setup.bash
+source /ros2_ws/install/setup.bash
+```
+
+---
+
+### Step 4: Run the Node
+
+```bash
+ros2 run multi_sensor_car_sim sensor_publisher
+```
+
+---
+
+### Step 5: Verify Running Nodes and Topics
+
+Check active nodes:
 
 ```bash
 ros2 node list
 ```
 
-4. Check available topics:
+Expected output:
+
+```
+/multi_sensor_node
+```
+
+Check active topics:
 
 ```bash
 ros2 topic list
 ```
 
-5. Subscribe to a topic to view sensor data:
+Expected output:
 
-```bash
-ros2 topic echo /battery_state
 ```
+/battery_state
+/lidar_front
+/parameter_events
+/rosout
+/wheel_speed
+```
+
+---
+
+### Step 6: Observe Published Sensor Data
+
+Once the node runs, you will see output like:
+
+```
+[INFO] [multi_sensor_node]: Published battery: 12.31V, lidar ranges: 314, wheel speed: 2.71 m/s
+[INFO] [multi_sensor_node]: Published battery: 12.45V, lidar ranges: 314, wheel speed: 1.68 m/s
+[INFO] [multi_sensor_node]: Published battery: 12.33V, lidar ranges: 314, wheel speed: 2.45 m/s
+[INFO] [multi_sensor_node]: Published battery: 11.58V, lidar ranges: 314, wheel speed: 4.89 m/s
+```
+
+**Explanation:**
+
+* `battery` → simulated battery voltage in Volts
+* `lidar ranges` → number of points measured by the LIDAR (unitless count)
+* `wheel speed` → simulated wheel speed in meters/second
+
+This is the **final outcome of the project**.
 
 ---
 
@@ -122,7 +193,7 @@ ros2 topic echo /battery_state
 
 ## CI/CD Pipeline
 
-GitHub Actions workflow `ci.yml`:
+GitHub Actions workflow (`ci.yml`):
 
 * Runs tests on each push to the `main` branch.
 * Builds Docker image.
