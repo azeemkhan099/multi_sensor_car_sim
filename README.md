@@ -1,4 +1,3 @@
-
 # Multi-Sensor Car Simulation (ROS2)
 
 A ROS2-based multi-sensor car simulation project demonstrating integration of multiple sensors, publishing real-time data, and modular node-based architecture.
