@@ -3,11 +3,10 @@ name: ROS2 CI
 # Only run on push to main or when PRs are opened targeting main
 on:
   push:
-    branches:
-      - main
-    # Ignore changes in the workflow file itself to prevent loops
+    branches: [ "main" ]
     paths-ignore:
-      - .github/workflows/ci.yml
+      - ".github/workflows/**"
+
   pull_request:
     branches:
       - main
